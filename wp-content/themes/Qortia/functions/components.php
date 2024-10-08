@@ -29,12 +29,15 @@ function the_map_section( $screen ) {
 	} else {
 		$collection = $categories;
 	}
-	$regions = get_terms( array(
+	$regions                   = get_terms( array(
 		'taxonomy'   => 'regions',
 		'hide_empty' => false,
 	) );
 	if ( $screen ):
-		if ( ! $screen['screen_off'] ) : ?>
+		if ( ! $screen['screen_off'] ) :
+			$list = $screen['list'];
+			$instruction_title = $screen['instruction_title'];
+			?>
             <section class="section-place pad_section">
                 <div class="container">
                     <div class="title-section-group">
@@ -839,9 +842,35 @@ function the_map_section( $screen ) {
                         </div>
                         <div class="place-wrap__price">
                             <div class="place-price-tab">
-                                <div class="place-price-tab__item js-tab-item ">
-
-                                </div>
+								<?php if ( $list && $instruction_title ): ?>
+                                    <div class="place-price-tab__item  js-tab-item" style="display: block;">
+                                        <div class="place-instruction">
+                                            <div class="place-price-tab__item-title place-instruction-title ">
+												<?php _t( $screen['instruction_title'] ) ?>
+                                            </div>
+                                            <div class="place-instruction-list">
+												<?php foreach ( $list as $j => $item ): $j = $j + 1; ?>
+                                                    <div class="place-instruction-list-item">
+                                                        <div class="place-instruction-list-item__head">
+                                                            <div class="place-instruction-list-item__title">
+																<?php echo $j . '. ' . $item['title'] ?>
+                                                            </div>
+															<?php if ( $image = $item['image'] ): ?>
+                                                                <div class="place-instruction-list-item__icon">
+                                                                    <img src="<?php _u( $image ) ?>"
+                                                                         alt="">
+                                                                </div>
+															<?php endif; ?>
+                                                        </div>
+                                                        <div class="instruction-list-item__text">
+															<?php _t( $item['text'] ) ?>
+                                                        </div>
+                                                    </div>
+												<?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+								<?php endif; ?>
 								<?php if ( $regions ) {
 									foreach ( $regions as $region ) {
 										$region_id     = $region->term_id;
@@ -868,11 +897,11 @@ function the_map_section( $screen ) {
 														}
 														?>
                                                         <div class="price-collapse js-collapse">
-                                                            <div class="price-collapse__item js-collapse-item">
+                                                            <div class="price-collapse__item js-collapse-item ">
                                                                 <div class="price-collapse__item-title js-collapse-title">
 																	<?php echo $term->name . ' ' . $category_name_suffix; ?>
                                                                 </div>
-                                                                <div class="price-collapse__item-content js-collapse-content">
+                                                                <div  class="price-collapse__item-content js-collapse-content">
                                                                     <ul>
 																		<?php
 																		foreach ( $points as $point_id ) {
@@ -1059,7 +1088,7 @@ function the_map_basis_product( $point_product, $point_id, $region_id ) {
 		)
 	);
 
-	$point_product_price = is_numeric($formulas_sum) ?$formulas_sum: $point_product_price;
+	$point_product_price = is_numeric( $formulas_sum ) ? $formulas_sum : $point_product_price;
 	$price_str           = get_formated_price( $point_product_price, $base_currency );
 	if ( $currencies ) {
 		$UAH = $point_product_price * $base_currency_rate;

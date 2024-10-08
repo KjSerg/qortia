@@ -71,13 +71,10 @@ function crb_attach_theme_options() {
 
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_front_page' );
 function crb_attach_in_front_page() {
-
-
 	$screens_labels = array(
 		'plural_name'   => 'секции',
 		'singular_name' => 'секцию',
 	);
-
 	$labels         = array(
 		'plural_name'   => 'элементы',
 		'singular_name' => 'элемент',
@@ -206,7 +203,20 @@ function crb_attach_in_front_page() {
 			              Field::make( "separator", "crb_style_inform", "Информация" ),
 			              Field::make( "rich_text", "title", "Заголовок" )->set_required( true ),
 			              Field::make( "textarea", "text", "Подзаголовок" ),
-
+			              Field::make( "textarea", "instruction_title", "Заголовок инструкции" )->set_rows(2),
+			              Field::make( 'complex', 'list', 'Список' )
+			                   ->set_layout( 'tabbed-vertical' )
+			                   ->setup_labels( $labels )
+			                   ->add_fields( array(
+				                   Field::make( "text", "title", "Заголовок" )->set_required( true )->set_width( 80 ),
+				                   Field::make( "image", "image", "Изображение" )->set_width( 20 ),
+				                   Field::make( "textarea", "text", "Текст" )->set_required( true )
+			                   ) ) ->set_header_template( '
+			                   <%- $_index + 1 %>.
+			                    <% if (title) { %>
+							        <%- title %>
+							    <% } %>
+			                   ' ),
 
 		              ) )
 		              ->add_fields( 'screen_10', 'Секция 10 - Контакты', array(
@@ -798,7 +808,20 @@ function crb_attach_in_products_page() {
 			              Field::make( "separator", "crb_style_inform", "Информация" ),
 			              Field::make( "rich_text", "title", "Заголовок" )->set_required( true ),
 			              Field::make( "textarea", "text", "Подзаголовок" ),
-
+			              Field::make( "textarea", "instruction_title", "Заголовок инструкции" )->set_rows(2),
+			              Field::make( 'complex', 'list', 'Список' )
+			                   ->set_layout( 'tabbed-vertical' )
+			                   ->setup_labels( $labels )
+			                   ->add_fields( array(
+				                   Field::make( "text", "title", "Заголовок" )->set_required( true )->set_width( 80 ),
+				                   Field::make( "image", "image", "Изображение" )->set_width( 20 ),
+				                   Field::make( "textarea", "text", "Текст" )->set_required( true )
+			                   ) ) ->set_header_template( '
+			                   <%- $_index + 1 %>.
+			                    <% if (title) { %>
+							        <%- title %>
+							    <% } %>
+			                   ' ),
 
 		              ) )
 		              ->add_fields( 'screen_10', 'Контакты', array(
@@ -877,7 +900,20 @@ function crb_attach_in_products() {
 			              Field::make( "separator", "crb_style_inform", "Информация" ),
 			              Field::make( "rich_text", "title", "Заголовок" )->set_required( true ),
 			              Field::make( "textarea", "text", "Подзаголовок" ),
-
+			              Field::make( "textarea", "instruction_title", "Заголовок инструкции" )->set_rows(2),
+			              Field::make( 'complex', 'list', 'Список' )
+			                   ->set_layout( 'tabbed-vertical' )
+			                   ->setup_labels( $labels )
+			                   ->add_fields( array(
+				                   Field::make( "text", "title", "Заголовок" )->set_required( true )->set_width( 80 ),
+				                   Field::make( "image", "image", "Изображение" )->set_width( 20 ),
+				                   Field::make( "textarea", "text", "Текст" )->set_required( true )
+			                   ) ) ->set_header_template( '
+			                   <%- $_index + 1 %>.
+			                    <% if (title) { %>
+							        <%- title %>
+							    <% } %>
+			                   ' ),
 
 		              ) )
 		              ->add_fields( 'screen_prices', ' Цены ', array(
