@@ -155,33 +155,35 @@ function restrict_admin_menu_for_non_admins() {
 	// Отримуємо поточного користувача
 	$current_user = wp_get_current_user();
 
-	// Якщо це не адміністратор, приховуємо деякі пункти меню
-	if ( ! current_user_can( 'administrator' ) ) {
-		// Приклад видалення розділів меню
-		remove_menu_page( 'index.php' );
-		remove_menu_page( 'edit.php' );
-		remove_menu_page( 'upload.php' );
-		remove_menu_page( 'edit-comments.php' );
-		remove_menu_page( 'themes.php' );
-		remove_menu_page( 'plugins.php' );
-		remove_menu_page( 'users.php' );
-		remove_menu_page( 'tools.php' );
-		remove_menu_page( 'options-general.php' );
-		remove_menu_page( 'edit.php?post_type=page' );
-		remove_menu_page( 'edit.php?post_type=contact_form' );
-		remove_menu_page( 'edit.php?post_type=cfe_results' );
-		remove_menu_page( 'edit.php?post_type=vacancies' );
-		remove_menu_page( 'edit.php?post_type=windows' );
-		remove_menu_page( 'edit.php?post_type=formulas' );
-		remove_menu_page( 'edit.php?post_type=products' );
-		remove_menu_page( 'edit.php?post_type=applications' );
+	if ( current_user_can( 'administrator' ) ) {
+		return;
 	}
+	remove_menu_page( 'index.php' );
+	remove_menu_page( 'edit.php' );
+	remove_menu_page( 'upload.php' );
+	remove_menu_page( 'edit-comments.php' );
+	remove_menu_page( 'themes.php' );
+	remove_menu_page( 'plugins.php' );
+	remove_menu_page( 'users.php' );
+	remove_menu_page( 'tools.php' );
+	remove_menu_page( 'options-general.php' );
+	remove_menu_page( 'edit.php?post_type=page' );
+	remove_menu_page( 'edit.php?post_type=contact_form' );
+	remove_menu_page( 'edit.php?post_type=cfe_results' );
+	remove_menu_page( 'edit.php?post_type=vacancies' );
+	remove_menu_page( 'edit.php?post_type=windows' );
+	remove_menu_page( 'edit.php?post_type=applications' );
+	if ( current_user_can( 'custom_role' ) ) {
+		return;
+	}
+	remove_menu_page( 'edit.php?post_type=formulas' );
+	remove_menu_page( 'edit.php?post_type=products' );
 }
 
 add_action( 'admin_menu', 'restrict_admin_menu_for_non_admins', 999 );
 
 function restrict_taxonomy_page_access() {
-	if ( ! current_user_can( 'administrator' ) ) {
+	if ( ! current_user_can( 'administrator' ) && ! current_user_can( 'custom_role' ) ) {
 		if ( isset( $_GET['taxonomy'], $_GET['post_type'] ) &&
 		     $_GET['taxonomy'] === 'regions' &&
 		     $_GET['post_type'] === 'points' ) {
@@ -193,52 +195,73 @@ function restrict_taxonomy_page_access() {
 			exit;
 		}
 	}
+
+
 }
 
 add_action( 'admin_init', 'restrict_taxonomy_page_access' );
 
 function user_point_access() {
-
-	if ( ! current_user_can( 'administrator' ) ) {
-		?>
-        <style>
-            .update-nag {
-                display: none!important;
-            }
-            #posts-filter .tablenav  {
-                display: none;
-            }
-            #the-list .row-actions {
-                display: none;
-            }
-	        .submitdelete, #regionsdiv, #postimagediv {
-                display: none;
-	        }
-	        #titlediv {
-		        opacity: 0.4;
-		        pointer-events: none;
-	        }
-            .carbon-box *:not([data-user="not-administrator"]) {
-                pointer-events: none;
-            }
-
-            [data-user="not-administrator"] {
-                pointer-events: auto;
-            }
-            .not-active  {
-	            pointer-events: none;
-	            opacity: 0.4;
-            }
-            .cf-complex.not-active{
-                opacity: 1;
-            }
-            .active-user-element, .cf-complex__tabs-item {
-                pointer-events: auto!important;
-	            opacity: 1;
-            }
-        </style>
-		<?php
+	if ( current_user_can( 'administrator' ) ) {
+		return;
 	}
+	?>
+    <style>
+
+        #the-list .row-actions, #delete-action, [value="trash"] {
+            display: none;
+        }
+    </style>
+	<?php
+	if (  current_user_can( 'custom_role' ) ) {
+		return;
+	}
+
+	?>
+
+    <style>
+
+        #posts-filter .tablenav {
+            display: none;
+        }
+
+        .update-nag {
+            display: none !important;
+        }
+
+        .submitdelete, #regionsdiv, #postimagediv {
+            display: none;
+        }
+
+        #titlediv {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .carbon-box *:not([data-user="not-administrator"]) {
+            pointer-events: none;
+        }
+
+        [data-user="not-administrator"] {
+            pointer-events: auto;
+        }
+
+        .not-active {
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .cf-complex.not-active {
+            opacity: 1;
+        }
+
+        .active-user-element, .cf-complex__tabs-item {
+            pointer-events: auto !important;
+            opacity: 1;
+        }
+    </style>
+	<?php
+
 }
 
 add_action( 'admin_init', 'user_point_access' );
@@ -247,7 +270,7 @@ add_action( 'admin_init', 'user_point_access' );
 add_action( 'admin_footer', 'custom_admin_js' );
 
 function custom_admin_js() {
-	if ( ! current_user_can( 'administrator' ) ) {
+	if ( ! current_user_can( 'administrator' ) || ! current_user_can( 'custom_role' ) ) {
 		?>
         <script>
             jQuery(document).ready(function () {
@@ -267,3 +290,17 @@ function custom_admin_js() {
 		<?php
 	}
 }
+
+function add_custom_role() {
+	add_role(
+		'custom_role', // Слаг для нової ролі
+		'Руководитель продаж', // Назва нової ролі
+		array(
+			'read'         => true,  // Дозволяємо читати публікації
+			'edit_posts'   => true,  // Дозволяємо редагувати пости
+			'delete_posts' => false, // Забороняємо видаляти пости
+		)
+	);
+}
+
+add_action( 'init', 'add_custom_role' );

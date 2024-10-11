@@ -118,7 +118,7 @@ if ( $category_type == 'reception' ) {
 											<?php if ( $list_currencies ) {
 												foreach ( $list_currencies as $code => $currency ) {
 													if ( $code !== 'UAH' && $code !== 'USD' ) {
-														$currency = $code == 'UAHVAT' ? _l( 'Гривні, з ПДВ',1 ) : $currency;
+														$currency = $code == 'UAHVAT' ? _l( 'Гривні, з ПДВ', 1 ) : $currency;
 														?>
                                                         <div class="table-column" data-code="<?php echo $code; ?>">
 															<?php echo $currency; ?>
@@ -147,9 +147,15 @@ if ( $category_type == 'reception' ) {
 													<?php echo carbon_get_post_meta( $point_id, 'point_address' ) ?>
                                                 </div>
 												<?php
-                                                the_single_product_prices($point_id, $category_type, $id, $region_id);
+												the_single_product_prices( array(
+													'point_id'      => $point_id,
+													'category_type' => $category_type,
+													'id'            => $id,
+													'region_id'     => $region_id,
+													'qnt'           => 1,
+												) );
 												?>
-                                                <div class="table-column " >
+                                                <div class="table-column ">
                                                     <a class="btn_long modal_open calculate-modal-btn"
                                                        data-region-id="<?php echo $region_id ?>"
                                                        data-point-id="<?php echo $point_id ?>"

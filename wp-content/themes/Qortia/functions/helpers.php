@@ -739,7 +739,6 @@ function get_formulas_sum( $formulas_id, $args = array() ) {
 	$num                 = 0;
 	$point_product_price = $args['point_product_price'] ?? 0;
 	if ( get_post( $formulas_id ) && $point_product_price ) {
-
 		$point_coef          = $args['point_coef'] ?? 1;
 		$region_id           = $args['region_id'] ?? 0;
 		$qnt                 = $args['qnt'] ?? 25;
@@ -1076,7 +1075,10 @@ function get_formated_price( $price, $currency ) {
 	return $price_str;
 }
 
-function get_simple_point_product_price( $point_product, $product_id, $point_id = 0, $region_id = 0 ) {
+function get_simple_point_product_price( $point_product, $product_id, $args = array() ) {
+	$point_id                       = $args['point_id'] ?? 0;
+	$region_id                      = $args['region_id'] ?? 0;
+	$qnt                            = $args['qnt'] ?? 25;
 	$basis                          = $point_product['basis'];
 	$point_type                     = $point_product['point_type'];
 	$point_price                    = $point_product['point_price'];
@@ -1109,6 +1111,7 @@ function get_simple_point_product_price( $point_product, $product_id, $point_id 
 				'point_service_price' => $point_price,
 				'distance'            => $distance,
 				'logistics'           => $point_logistics_price,
+				'qnt'                 => $qnt,
 			)
 		);
 		$currency_sting      = get_currency_sting( $base_currency );

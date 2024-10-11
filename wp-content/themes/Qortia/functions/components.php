@@ -901,7 +901,7 @@ function the_map_section( $screen ) {
                                                                 <div class="price-collapse__item-title js-collapse-title">
 																	<?php echo $term->name . ' ' . $category_name_suffix; ?>
                                                                 </div>
-                                                                <div  class="price-collapse__item-content js-collapse-content">
+                                                                <div class="price-collapse__item-content js-collapse-content">
                                                                     <ul>
 																		<?php
 																		foreach ( $points as $point_id ) {
@@ -1035,7 +1035,11 @@ function the_map_point_product( $product_id, $point_product, $point_id ) {
 		$base_currency       = $price_data['base_currency'];
 		$base_currency_rate  = get_currency_rate( $base_currency );
 		$currencies          = $point_product['currency'];
-		$point_product_price = get_simple_point_product_price( $point_product, $product_id, $point_id, $region_id );
+		$point_product_price = get_simple_point_product_price( $point_product, $product_id, array(
+			'point_id'  => $point_id,
+			'region_id' => $region_id,
+			'qnt'       => 1
+		) );
 		$price_str           = get_formated_price( $point_product_price, $base_currency );
 		if ( $currencies ) {
 			$UAH = $point_product_price * $base_currency_rate;
@@ -1334,7 +1338,11 @@ function the_prices_section( $screen ) {
 																						$base_currency_rate  = get_currency_rate( $base_currency );
 																						$sub_test            = true;
 																						$currencies          = $point_product['currency'];
-																						$point_product_price = get_simple_point_product_price( $point_product, $_product_id, $point_id, $region_id );
+																						$point_product_price = get_simple_point_product_price( $point_product, $_product_id, array(
+																							'point_id'  => $point_id,
+																							'region_id' => $region_id,
+																							'qnt'       => 1
+																						) );
 																						$price_str           = get_formated_price( $point_product_price, $base_currency );
 																						if ( $currencies ) {
 																							$UAH = $point_product_price * $base_currency_rate;
@@ -1835,7 +1843,12 @@ function the_calculate() {
 	<?php
 }
 
-function the_single_product_prices( $point_id, $category_type, $id, $region_id ) {
+function the_single_product_prices( $args = array() ) {
+	$point_id       = $args['point_id'];
+	$category_type  = $args['category_type'];
+	$region_id      = $args['region_id'];
+	$id             = $args['id'];
+	$qnt            = $args['qnt'] ?? 25;
 	$point_products = carbon_get_post_meta( $point_id, 'point_basis_products' );
 	if ( $point_products ) {
 		foreach ( $point_products as $point_product ) {
@@ -1893,7 +1906,11 @@ function the_single_product_prices( $point_id, $category_type, $id, $region_id )
 							$price               = $price_data['price'];
 							$base_currency       = $price_data['base_currency'];
 							$base_currency_rate  = get_currency_rate( $base_currency );
-							$point_product_price = get_simple_point_product_price( $point_product, $product_id, $point_id, $region_id );
+							$point_product_price = get_simple_point_product_price( $point_product, $product_id, array(
+								'point_id'  => $point_id,
+								'region_id' => $region_id,
+								'qnt'       => $qnt,
+							) );
 							$price_str           = get_formated_price( $point_product_price, $base_currency );
 							echo "<div class='table-column' data-code='$base_currency'  data-price='$point_product_price'>$price_str</div>";
 							if ( $currencies ) {
