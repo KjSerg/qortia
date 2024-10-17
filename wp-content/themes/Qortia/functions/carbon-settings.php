@@ -88,7 +88,7 @@ function crb_attach_in_front_page() {
 		'singular_name' => 'вкладку',
 	);
 	Container::make( 'post_meta', 'Секции на главной странице' )
-	         ->show_on_template( 'index.php' )
+	         ->where( 'post_id', '=', get_option( 'page_on_front' ) )
 	         ->add_fields( array(
 		         Field::make( 'complex', 'screens_front', 'Секции' )
 		              ->set_layout( 'tabbed-vertical' )
@@ -203,21 +203,13 @@ function crb_attach_in_front_page() {
 			              Field::make( "separator", "crb_style_inform", "Информация" ),
 			              Field::make( "rich_text", "title", "Заголовок" )->set_required( true ),
 			              Field::make( "textarea", "text", "Подзаголовок" ),
-			              Field::make( "textarea", "instruction_title", "Заголовок инструкции" )->set_rows(2),
-			              Field::make( 'complex', 'list', 'Список' )
-			                   ->set_layout( 'tabbed-vertical' )
-			                   ->setup_labels( $labels )
-			                   ->add_fields( array(
-				                   Field::make( "text", "title", "Заголовок" )->set_required( true )->set_width( 80 ),
-				                   Field::make( "image", "image", "Изображение" )->set_width( 20 ),
-				                   Field::make( "textarea", "text", "Текст" )->set_required( true )
-			                   ) ) ->set_header_template( '
-			                   <%- $_index + 1 %>.
-			                    <% if (title) { %>
-							        <%- title %>
-							    <% } %>
-			                   ' ),
-
+			              Field::make( 'association', 'crb_association', __( 'Порядок категорий' ) )
+			                   ->set_types( array(
+				                   array(
+					                   'type'     => 'term',
+					                   'taxonomy' => 'categories',
+				                   ),
+			                   ) )
 		              ) )
 		              ->add_fields( 'screen_10', 'Секция 10 - Контакты', array(
 			              Field::make( "separator", "crb_style_screen_off", "Отключить секцию?" ),
@@ -238,7 +230,7 @@ function crb_attach_in_front_page() {
 	         ) );
 
 	Container::make( 'post_meta', "Дополнительные настройки" )
-	         ->show_on_template( 'index.php' )
+	         ->where( 'post_id', '=', get_option( 'page_on_front' ) )
 	         ->add_tab( 'Меню в хедере', array(
 		         Field::make( 'complex', 'menu_list_main', 'Меню в хедере' )->set_max( 5 )
 		              ->setup_labels( $labels )
@@ -313,7 +305,15 @@ function crb_attach_in_about_page() {
 		'singular_name' => 'вкладку',
 	);
 	Container::make( 'post_meta', 'Секции на странице о нас' )
-	         ->show_on_template( 'about.php' )
+	         ->where( 'post_type', '=', 'page' )
+	         ->where( 'post_id', '!=', get_option( 'page_on_front' ) )
+	         ->where( 'post_template', '=', 'about.php' )
+	         ->where( 'post_template', '!=', 'partners.php' )
+	         ->where( 'post_template', '!=', 'contact.php' )
+	         ->where( 'post_template', '!=', 'vacancies.php' )
+	         ->where( 'post_template', '!=', 'invest.php' )
+	         ->where( 'post_template', '!=', 'fuel-page.php' )
+	         ->where( 'post_template', '!=', 'order-page.php' )
 	         ->add_fields( array(
 		         Field::make( 'complex', 'screens_about', 'Секции' )
 		              ->set_layout( 'tabbed-vertical' )
@@ -406,7 +406,15 @@ function crb_attach_in_partners_page() {
 		'singular_name' => 'вкладку',
 	);
 	Container::make( 'post_meta', 'Секции на странице Партнерам' )
-	         ->show_on_template( 'partners.php' )
+	         ->where( 'post_type', '=', 'page' )
+	         ->where( 'post_id', '!=', get_option( 'page_on_front' ) )
+	         ->where( 'post_template', '=', 'partners.php' )
+	         ->where( 'post_template', '!=', 'about.php' )
+	         ->where( 'post_template', '!=', 'contact.php' )
+	         ->where( 'post_template', '!=', 'vacancies.php' )
+	         ->where( 'post_template', '!=', 'invest.php' )
+	         ->where( 'post_template', '!=', 'fuel-page.php' )
+	         ->where( 'post_template', '!=', 'order-page.php' )
 	         ->add_fields( array(
 		         Field::make( 'complex', 'screens_partners', 'Секции' )
 		              ->set_layout( 'tabbed-vertical' )
@@ -481,7 +489,15 @@ function crb_attach_in_contact_page() {
 		'singular_name' => 'вкладку',
 	);
 	Container::make( 'post_meta', 'Секции на странице контактов' )
-	         ->show_on_template( 'contact.php' )
+	         ->where( 'post_type', '=', 'page' )
+	         ->where( 'post_id', '!=', get_option( 'page_on_front' ) )
+	         ->where( 'post_template', '=', 'contact.php' )
+	         ->where( 'post_template', '!=', 'about.php' )
+	         ->where( 'post_template', '!=', 'partners.php' )
+	         ->where( 'post_template', '!=', 'vacancies.php' )
+	         ->where( 'post_template', '!=', 'invest.php' )
+	         ->where( 'post_template', '!=', 'fuel-page.php' )
+	         ->where( 'post_template', '!=', 'order-page.php' )
 	         ->add_fields( array(
 		         Field::make( 'complex', 'screens_contact', 'Секции' )
 		              ->set_layout( 'tabbed-vertical' )
@@ -543,7 +559,15 @@ function crb_attach_in_career_page() {
 		'singular_name' => 'вкладку',
 	);
 	Container::make( 'post_meta', 'Секции на странице Карьера' )
-	         ->show_on_template( 'vacancies.php' )
+	         ->where( 'post_type', '=', 'page' )
+	         ->where( 'post_id', '!=', get_option( 'page_on_front' ) )
+	         ->where( 'post_template', '=', 'vacancies.php' )
+	         ->where( 'post_template', '!=', 'about.php' )
+	         ->where( 'post_template', '!=', 'partners.php' )
+	         ->where( 'post_template', '!=', 'contact.php' )
+	         ->where( 'post_template', '!=', 'invest.php' )
+	         ->where( 'post_template', '!=', 'fuel-page.php' )
+	         ->where( 'post_template', '!=', 'order-page.php' )
 	         ->add_fields( array(
 
 		         Field::make( 'complex', 'screens_career', 'Секции' )
@@ -613,31 +637,6 @@ function crb_attach_in_career_page() {
 	         ) );
 }
 
-add_action( 'carbon_fields_register_fields', 'crb_attach_theme_vacancies_item' );
-function crb_attach_theme_vacancies_item() {
-	$labels = array(
-		'plural_name'   => 'елемент',
-		'singular_name' => 'елемент',
-	);
-	Container::make( 'post_meta', 'Настройка' )
-	         ->show_on_post_type( 'vacancies' )
-	         ->add_fields(
-		         array(
-			         Field::make( "text", "price", "Зарплата" )->set_required( true ),
-			         Field::make( "text", "place", "Место" )->set_required( true ),
-
-			         Field::make( 'complex', 'list_description', 'Список' )->set_required( true )
-			              ->setup_labels( $labels )
-			              ->add_fields( array(
-				              Field::make( 'text', 'list_description_name', 'Название' )->set_required( true ),
-				              Field::make( 'text', 'list_description_value', 'Значение' )->set_required( true ),
-			              ) ),
-
-
-		         )
-	         );
-}
-
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_invest_page' );
 function crb_attach_in_invest_page() {
 
@@ -660,7 +659,15 @@ function crb_attach_in_invest_page() {
 		'singular_name' => 'вкладку',
 	);
 	Container::make( 'post_meta', 'Секции на странице Инвесторам' )
-	         ->show_on_template( 'invest.php' )
+	         ->where( 'post_type', '=', 'page' )
+	         ->where( 'post_id', '!=', get_option( 'page_on_front' ) )
+	         ->where( 'post_template', '=', 'invest.php' )
+	         ->where( 'post_template', '!=', 'about.php' )
+	         ->where( 'post_template', '!=', 'partners.php' )
+	         ->where( 'post_template', '!=', 'contact.php' )
+	         ->where( 'post_template', '!=', 'vacancies.php' )
+	         ->where( 'post_template', '!=', 'fuel-page.php' )
+	         ->where( 'post_template', '!=', 'order-page.php' )
 	         ->add_fields( array(
 
 		         Field::make( 'complex', 'screens_invest', 'Секции' )
@@ -705,6 +712,7 @@ function crb_attach_in_invest_page() {
 	         ) );
 }
 
+
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_products_page' );
 function crb_attach_in_products_page() {
 	$screens_labels = array(
@@ -724,7 +732,15 @@ function crb_attach_in_products_page() {
 		'singular_name' => 'вкладку',
 	);
 	Container::make( 'post_meta', 'Секции на странице' )
-	         ->show_on_template( 'fuel-page.php' )
+	         ->where( 'post_type', '=', 'page' )
+	         ->where( 'post_id', '!=', get_option( 'page_on_front' ) )
+	         ->where( 'post_template', '=', 'fuel-page.php' )
+	         ->where( 'post_template', '!=', 'about.php' )
+	         ->where( 'post_template', '!=', 'partners.php' )
+	         ->where( 'post_template', '!=', 'contact.php' )
+	         ->where( 'post_template', '!=', 'vacancies.php' )
+	         ->where( 'post_template', '!=', 'invest.php' )
+	         ->where( 'post_template', '!=', 'order-page.php' )
 	         ->add_fields( array(
 
 		         Field::make( 'complex', 'screens_fuel', 'Секции' )
@@ -808,20 +824,7 @@ function crb_attach_in_products_page() {
 			              Field::make( "separator", "crb_style_inform", "Информация" ),
 			              Field::make( "rich_text", "title", "Заголовок" )->set_required( true ),
 			              Field::make( "textarea", "text", "Подзаголовок" ),
-			              Field::make( "textarea", "instruction_title", "Заголовок инструкции" )->set_rows(2),
-			              Field::make( 'complex', 'list', 'Список' )
-			                   ->set_layout( 'tabbed-vertical' )
-			                   ->setup_labels( $labels )
-			                   ->add_fields( array(
-				                   Field::make( "text", "title", "Заголовок" )->set_required( true )->set_width( 80 ),
-				                   Field::make( "image", "image", "Изображение" )->set_width( 20 ),
-				                   Field::make( "textarea", "text", "Текст" )->set_required( true )
-			                   ) ) ->set_header_template( '
-			                   <%- $_index + 1 %>.
-			                    <% if (title) { %>
-							        <%- title %>
-							    <% } %>
-			                   ' ),
+
 
 		              ) )
 		              ->add_fields( 'screen_10', 'Контакты', array(
@@ -847,7 +850,15 @@ function crb_attach_in_products_page() {
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_order_page' );
 function crb_attach_in_order_page() {
 	Container::make( 'post_meta', 'Настройки' )
-	         ->show_on_template( 'order-page.php' )
+	         ->where( 'post_type', '=', 'page' )
+	         ->where( 'post_id', '!=', get_option( 'page_on_front' ) )
+	         ->where( 'post_template', '=', 'order-page.php' )
+	         ->where( 'post_template', '!=', 'about.php' )
+	         ->where( 'post_template', '!=', 'partners.php' )
+	         ->where( 'post_template', '!=', 'contact.php' )
+	         ->where( 'post_template', '!=', 'vacancies.php' )
+	         ->where( 'post_template', '!=', 'fuel-page.php' )
+	         ->where( 'post_template', '!=', 'invest.php' )
 	         ->add_fields( array(
 		         Field::make( "text", "order_form_title", "Заголовок формы" ),
 		         Field::make( "text", "order_form_short_code", "Шорткод формы" )->set_required( true ),
@@ -859,6 +870,8 @@ function crb_attach_in_order_page() {
 }
 
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_products' );
+
+
 function crb_attach_in_products() {
 	$screens_labels = array(
 		'plural_name'   => 'секции',
@@ -878,7 +891,7 @@ function crb_attach_in_products() {
 	);
 
 	Container::make( 'post_meta', 'Секции на странице' )
-	         ->show_on_post_type( array( 'products' ) )
+	         ->where( 'post_type', '=', 'products' )
 	         ->add_fields( array(
 
 		         Field::make( 'complex', 'screens_product', 'Секции' )
@@ -900,20 +913,7 @@ function crb_attach_in_products() {
 			              Field::make( "separator", "crb_style_inform", "Информация" ),
 			              Field::make( "rich_text", "title", "Заголовок" )->set_required( true ),
 			              Field::make( "textarea", "text", "Подзаголовок" ),
-			              Field::make( "textarea", "instruction_title", "Заголовок инструкции" )->set_rows(2),
-			              Field::make( 'complex', 'list', 'Список' )
-			                   ->set_layout( 'tabbed-vertical' )
-			                   ->setup_labels( $labels )
-			                   ->add_fields( array(
-				                   Field::make( "text", "title", "Заголовок" )->set_required( true )->set_width( 80 ),
-				                   Field::make( "image", "image", "Изображение" )->set_width( 20 ),
-				                   Field::make( "textarea", "text", "Текст" )->set_required( true )
-			                   ) ) ->set_header_template( '
-			                   <%- $_index + 1 %>.
-			                    <% if (title) { %>
-							        <%- title %>
-							    <% } %>
-			                   ' ),
+
 
 		              ) )
 		              ->add_fields( 'screen_prices', ' Цены ', array(
@@ -927,6 +927,31 @@ function crb_attach_in_products() {
 	         ) );
 }
 
+add_action( 'carbon_fields_register_fields', 'crb_attach_theme_vacancies_item' );
+function crb_attach_theme_vacancies_item() {
+	$labels = array(
+		'plural_name'   => 'елемент',
+		'singular_name' => 'елемент',
+	);
+	Container::make( 'post_meta', 'Настройка' )
+	         ->where( 'post_type', '=', 'vacancies' )
+	         ->add_fields(
+		         array(
+			         Field::make( "text", "price", "Зарплата" )->set_required( true ),
+			         Field::make( "text", "place", "Место" )->set_required( true ),
+
+			         Field::make( 'complex', 'list_description', 'Список' )->set_required( true )
+			              ->setup_labels( $labels )
+			              ->add_fields( array(
+				              Field::make( 'text', 'list_description_name', 'Название' )->set_required( true ),
+				              Field::make( 'text', 'list_description_value', 'Значение' )->set_required( true ),
+			              ) ),
+
+
+		         )
+	         );
+}
+
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_formulas' );
 function crb_attach_in_formulas() {
 	$labels = array(
@@ -934,7 +959,7 @@ function crb_attach_in_formulas() {
 		'singular_name' => 'элемент',
 	);
 	Container::make( 'post_meta', 'Формула' )
-	         ->show_on_post_type( array( 'formulas' ) )
+	         ->where( 'post_type', '=', 'formulas' )
 	         ->add_fields( array(
 		         Field::make( 'html', 'crb_information_text', "После сохранения вы увидете формулу прописью" )
 		              ->set_html( 'html_information_for_formula' ),
@@ -1049,7 +1074,7 @@ function crb_attach_in_modal_windows() {
 		'singular_name' => 'элемент',
 	);
 	Container::make( 'post_meta', 'Форма' )
-	         ->show_on_post_type( 'windows' )
+	         ->where( 'post_type', '=', 'windows' )
 	         ->add_fields( array(
 		         Field::make( "text", "window_id", "ID окна (уникальное значение)" )
 		              ->set_attribute( 'pattern', '^[a-z0-9\-]+$' )
@@ -1236,7 +1261,7 @@ function crb_attach_in_points() {
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_applications' );
 function crb_attach_in_applications() {
 	Container::make( 'post_meta', 'Информация' )
-	         ->show_on_post_type( 'applications' )
+	         ->where( 'post_type', '=', 'applications' )
 	         ->add_tab( __( 'Товар' ), array(
 		         Field::make( 'separator', 'crb_data', __( 'Товар' ) ),
 		         Field::make( 'select', 'application_status', __( 'Статус' ) )
@@ -1277,7 +1302,7 @@ function crb_attach_in_applications() {
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_categories' );
 function crb_attach_in_categories() {
 	Container::make( 'term_meta', 'Настройки' )
-	         ->show_on_taxonomy( 'categories' )
+	         ->where( 'term_taxonomy', '=', 'categories' )
 	         ->add_fields( array(
 		         Field::make( 'select', 'category_type', __( 'Выберите фильтрацию категории' ) )
 		              ->set_options( array(
@@ -1301,7 +1326,7 @@ function crb_attach_in_categories() {
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_regions' );
 function crb_attach_in_regions() {
 	Container::make( 'term_meta', 'Настройки' )
-	         ->show_on_taxonomy( 'regions' )
+	         ->where( 'term_taxonomy', '=', 'regions' )
 	         ->add_fields( array(
 		         Field::make( 'select', 'region_map_path_id', __( 'Выберите область на изображение' ) )
 		              ->add_options( 'get_map_path_list' ),
@@ -1314,8 +1339,10 @@ function crb_attach_in_regions() {
 
 add_action( 'after_setup_theme', 'crb_load' );
 function crb_load() {
-	get_template_part( 'vendor/autoload' );
-	\Carbon_Fields\Carbon_Fields::boot();
+	if ( ! class_exists( 'Carbon_Fields\Carbon_Fields' ) ) {
+		get_template_part( 'vendor/autoload' );
+		\Carbon_Fields\Carbon_Fields::boot();
+	}
 }
 
 add_filter( 'crb_media_buttons_html', function ( $html, $field_name ) {

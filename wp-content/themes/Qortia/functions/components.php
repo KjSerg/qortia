@@ -1,6 +1,6 @@
 <?php
 function the_map_section( $screen ) {
-
+	$assets          = get_bloginfo( 'template_url' ) . '/assets/';
 	$page_id         = get_the_ID();
 	$is_product_page = get_post_type( $page_id ) == 'products';
 	$term_id         = $_GET['term_id'] ?? '';
@@ -27,16 +27,22 @@ function the_map_section( $screen ) {
 		$term         = get_term_by( 'term_id', $term_id, 'categories' );
 		$collection[] = $term;
 	} else {
-		$collection = $categories;
+		$crb_association = $screen['crb_association'];
+		if ( $crb_association ) {
+			$collection = array();
+			foreach ( $crb_association as $category ) {
+				$collection[] = get_term_by( 'id', $category['id'], $category['subtype'] );
+			}
+		} else {
+			$collection = $categories;
+		}
 	}
-	$regions                   = get_terms( array(
+	$regions = get_terms( array(
 		'taxonomy'   => 'regions',
 		'hide_empty' => false,
 	) );
 	if ( $screen ):
 		if ( ! $screen['screen_off'] ) :
-			$list = $screen['list'];
-			$instruction_title = $screen['instruction_title'];
 			?>
             <section class="section-place pad_section">
                 <div class="container">
@@ -52,7 +58,7 @@ function the_map_section( $screen ) {
                             </div>
 						<?php endif; ?>
                     </div>
-                    <div class="place-wrap js-tab" data-aos="fade-up" data-aos-delay="600">
+                    <div class="plac-wrap js-tab" data-aos="fade-up" data-aos-delay="600">
                         <div class="place-wrap__map">
                             <div class="place-wrap__map-main">
 
@@ -842,35 +848,16 @@ function the_map_section( $screen ) {
                         </div>
                         <div class="place-wrap__price">
                             <div class="place-price-tab">
-								<?php if ( $list && $instruction_title ): ?>
-                                    <div class="place-price-tab__item  js-tab-item" style="display: block;">
-                                        <div class="place-instruction">
-                                            <div class="place-price-tab__item-title place-instruction-title ">
-												<?php _t( $screen['instruction_title'] ) ?>
-                                            </div>
-                                            <div class="place-instruction-list">
-												<?php foreach ( $list as $j => $item ): $j = $j + 1; ?>
-                                                    <div class="place-instruction-list-item">
-                                                        <div class="place-instruction-list-item__head">
-                                                            <div class="place-instruction-list-item__title">
-																<?php echo $j . '. ' . $item['title'] ?>
-                                                            </div>
-															<?php if ( $image = $item['image'] ): ?>
-                                                                <div class="place-instruction-list-item__icon">
-                                                                    <img src="<?php _u( $image ) ?>"
-                                                                         alt="">
-                                                                </div>
-															<?php endif; ?>
-                                                        </div>
-                                                        <div class="instruction-list-item__text">
-															<?php _t( $item['text'] ) ?>
-                                                        </div>
-                                                    </div>
-												<?php endforeach; ?>
-                                            </div>
+                                <div class="place-price-tab__item  js-tab-item active" style="display: block;">
+                                    <div class="place-instruction">
+                                        <div class="place-price-tab__item-title place-instruction-title ">
+											<?php _l( 'Натисніть на область на карті та ми покажемо актуальні ціни в регіоні.' ) ?>
+                                        </div>
+                                        <div class="place-instruction-image">
+                                            <img src="<?php echo $assets ?>img/image17.jpg" alt="">
                                         </div>
                                     </div>
-								<?php endif; ?>
+                                </div>
 								<?php if ( $regions ) {
 									foreach ( $regions as $region ) {
 										$region_id     = $region->term_id;

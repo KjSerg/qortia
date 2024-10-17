@@ -5,7 +5,6 @@ $doc.ready(function () {
     table();
     setProductInputValue();
     hideEmptyPriceElements();
-    initAutocomplete();
     selectricInit();
     telMaskInit();
     $doc.on('change', '.trigger-input', function () {
@@ -326,7 +325,7 @@ $doc.ready(function () {
         if ($t.closest('.place-wrap__map').length > 0) {
             $el.setPlacePriceElementHeight();
             setTimeout(function () {
-                if ($el.outerHeight() > 350) scrollTopToElement($el.find('.price-collapse:not(.hidden)').eq(0));
+                // if ($el.outerHeight() > 350) scrollTopToElement($el.find('.price-collapse:not(.hidden)').eq(0));
             }, 50);
         }
     });

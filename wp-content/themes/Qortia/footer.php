@@ -69,7 +69,22 @@
     var emailErrorString = '<?php _l( 'Поле пошти повино містити симоли: "@", "." а також символи і/або цифри між ними.' ); ?>';
     var arrowBottomSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none"><path d="M10.5 15C10.1868 15.0006 9.87651 14.9301 9.58706 14.7924C9.29762 14.6548 9.0347 14.4527 8.8134 14.1979L2.5 6.93885L4.1866 5L10.5 12.2576L16.8134 5L18.5 6.93885L12.1866 14.1965C11.9654 14.4516 11.7025 14.6539 11.4131 14.7918C11.1236 14.9297 10.8133 15.0004 10.5 15Z" fill="#939399"/></svg>';
 </script>
+<?php if ( $google_map_api_key = carbon_get_theme_option( 'google_map_api_key' ) ): ?>
+    <script>
+        function loadScript() {
+            var script = document.createElement("script");
+            script.src = "https://maps.googleapis.com/maps/api/js?key=<?php echo $google_map_api_key; ?>&libraries=places&callback=initAutocomplete&language=uk";
+            script.async = true;
+            script.defer = true;
+            script.id = 'google-map-api';
+            script.onload = initAutocomplete;
+            document.body.appendChild(script);
+        }
 
+        window.onload = loadScript;
+    </script>
+
+<?php endif; ?>
 <?php
 wp_footer();
 the_modals();
@@ -78,10 +93,6 @@ the_calculate();
 
 ?>
 
-<?php if ( $google_map_api_key = carbon_get_theme_option( 'google_map_api_key' ) ): ?>
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $google_map_api_key; ?>&amp;;libraries=places&amp;callback=initAutocomplete&amp;libraries=places&amp;v=weekly&amp;language=uk"
-            id="google-map-api" defer=""></script>
-<?php endif; ?>
 
 </body>
 

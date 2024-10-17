@@ -6,13 +6,13 @@
  */
 
 function Qortia_scripts() {
-	wp_enqueue_style( 'Qortia-fancy-css', 'https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css', array(), '1.0' );
+	wp_enqueue_style( 'Qortia-fancy-css', get_template_directory_uri() . '/assets/css/jquery.fancybox.min.css', array(), '1.0' );
 	wp_enqueue_style( 'Qortia-main-css', get_template_directory_uri() . '/assets/css/main.css', array(), '1.0' );
 	wp_enqueue_style( 'Qortia-fix-css', get_template_directory_uri() . '/assets/css/fix.css', array(), '1.0' );
 	wp_enqueue_style( 'Qortia-style-css', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0.2' );
 	wp_enqueue_script( 'Qortia-jquery-scripts', get_template_directory_uri() . '/assets/js/jquery.js', array(), '1.0', true );
-	wp_enqueue_script( 'Qortia-fancy-scripts', 'https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', array(), '1.0', true );
-	wp_enqueue_script( 'Qortia-inputmask-scripts', 'https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.9/jquery.inputmask.min.js', array(), '1.0', true );
+	wp_enqueue_script( 'Qortia-fancy-scripts', get_template_directory_uri() . '/assets/js/jquery.fancybox.min.js', array(), '1.0', true );
+	wp_enqueue_script( 'Qortia-inputmask-scripts', get_template_directory_uri() . '/assets/js/jquery.inputmask.min.js', array(), '1.0', true );
 	wp_enqueue_script( 'Qortia-libs-scripts', get_template_directory_uri() . '/assets/js/libs.min.js', array(), '1.0', true );
 	wp_enqueue_script( 'Qortia-main-scripts', get_template_directory_uri() . '/assets/js/main.js', array(), '1.0.1', true );
 	wp_enqueue_script( 'Qortia-fix-scripts', get_template_directory_uri() . '/assets/js/fix.js', array(), '1.0', true );
