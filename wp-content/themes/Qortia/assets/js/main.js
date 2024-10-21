@@ -77,7 +77,6 @@ $(document).ready(function () {
 
     $('.js-collapse').on('click', '.js-collapse-title', function (event) {
         event.preventDefault();
-
         if ($(this).closest('.js-collapse-item').hasClass('active')) {
             $(this).closest('.js-collapse').find('.js-collapse-content').slideUp(400);
             $(this).closest('.js-collapse-item').removeClass('active');

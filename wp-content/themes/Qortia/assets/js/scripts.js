@@ -364,23 +364,22 @@ $doc.ready(function () {
     });
 });
 
-
 (function ($) {
-
     function clearPlacePriceElementHeight() {
         $(document).find('.show-all-content').remove();
         var $contents = $(document).find('.price-collapse__item-content');
-        $(document).find('.price-collapse__item').removeClass('active');
+        // $(document).find('.price-collapse__item').removeClass('active');
+
         $contents.each(function (l) {
             var $content = $(this);
             $content.removeAttr('id');
-            $content.removeAttr('style');
+            // $content.removeAttr('style');
+            $content.css('height', '');
             $content.removeAttr('data-height');
             $content.removeAttr('data-full-height');
             $content.removeClass('clipped-element');
         });
     }
-
     $.fn.setPlacePriceElementHeight = function () {
         var headerH = $(document).find('header').outerHeight();
         var windowHeight = $(window).height();
@@ -494,6 +493,7 @@ function scrollTopToElement($element) {
 
 $(window).on('load resize', tableInit);
 $(window).on('resize', function () {
+
     $(document).find('.js-tab-item[data-target]').setPlacePriceElementHeight();
 });
 
