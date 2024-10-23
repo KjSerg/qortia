@@ -712,7 +712,6 @@ function crb_attach_in_invest_page() {
 	         ) );
 }
 
-
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_products_page' );
 function crb_attach_in_products_page() {
 	$screens_labels = array(
@@ -870,7 +869,6 @@ function crb_attach_in_order_page() {
 }
 
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_products' );
-
 
 function crb_attach_in_products() {
 	$screens_labels = array(
@@ -1246,7 +1244,9 @@ function crb_attach_in_points() {
 			              Field::make( "text", "point_coef", "Коефициент пункта приемки" )->set_attribute( 'data-user', $user )
 			                   ->set_attribute( 'type', 'number' )->set_required( true ),
 			              Field::make( 'select', 'formulas', __( 'Формула доставки' ) )
-			                   ->add_options( 'get_formulas_for_select' ),
+			                   ->add_options( 'get_formulas_for_select' )->set_width(50),
+			              Field::make( 'select', 'table_formulas', __( 'Формула доставки в таблице' ) )
+			                   ->add_options( 'get_formulas_for_select' )->set_width(50),
 			              Field::make( 'multiselect', 'currency', __( 'Валюты, которые отображаются согласно курса НБУ по отношению к базовой валюте' ) )
 			                   ->set_required( true )
 			                   ->add_options( 'get_currencies_value' )

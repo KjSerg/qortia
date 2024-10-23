@@ -1055,6 +1055,22 @@ function get_point_product_price( $point_product ) {
 	$point_price_currency           = $point_product['point_price_currency'];
 	$base_currency_rate             = get_currency_rate( $base_currency );
 	$currency_sting                 = get_currency_sting( $base_currency );
+	if ( $table_formulas = $point_product['table_formulas'] ) {
+		$formulas_sum        = get_formulas_sum( $table_formulas,
+			array(
+				'point_product_price' => $point_product_price,
+				'point_coef'          => $point_product['point_coef'],
+				'region_id'           => 0,
+				'point_id'            => 0,
+				'point_service_price' => $point_price,
+				'distance'            => 0,
+				'logistics'           => $point_logistics_price,
+				'qnt'                 => 1,
+			)
+		);
+		$point_product_price = $formulas_sum ?: $point_product_price;
+	}
+
 	if ( $point_price_currency != $base_currency && $point_price > 0 ) {
 		$point_price_currency_rate = get_currency_rate( $point_price_currency );
 		$point_price               = ( $point_price * $point_price_currency_rate ) / $base_currency_rate;
