@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="339bc16d-3e60-4506-9554-45b5586eb58c" name="Changes" comment="змінив версію карбонфілдс на новішу + сортування категорій на головній + зміна блоку карти">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/carbon-settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/carbon-settings.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/helpers.php" beforeDir="false" afterPath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/helpers.php" afterDir="false" />
-    </list>
+    <list default="true" id="339bc16d-3e60-4506-9554-45b5586eb58c" name="Changes" comment="змінив версію карбонфілдс на новішу + сортування категорій на головній + зміна блоку карти" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -108,7 +104,7 @@
       <workItem from="1729152229871" duration="1160000" />
       <workItem from="1729153589480" duration="3714000" />
       <workItem from="1729499113193" duration="5638000" />
-      <workItem from="1729670888422" duration="6938000" />
+      <workItem from="1729670888422" duration="7236000" />
     </task>
     <task id="LOCAL-00001" summary="Added initial project files1">
       <option name="closed" value="true" />
