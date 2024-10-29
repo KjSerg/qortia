@@ -451,6 +451,8 @@ function new_calculation() {
 				$price_to_region        = 0;
 				$price_to_region_string = 0;
 				$temp                   = array( 'product' => '', 'product_id' => '', 'qnt' => '', 'price' => '' );
+				$formula                = carbon_get_theme_option( 'formulas' );
+				$first_operation        = '';
 				if ( $qnts && isset( $qnts[ $index ] ) && $qnts[ $index ] > 0 && get_post( $productID ) ) {
 					$suitable_point_ID  = $selected_point ?: 0;
 					$qnt                = $qnts[ $index ] ?? 1;
@@ -461,16 +463,18 @@ function new_calculation() {
 					if ( $category ) {
 						$category             = $category[0];
 						$category_type        = carbon_get_term_meta( $category->term_id, 'category_type' );
+						$formula              = carbon_get_term_meta( $category->term_id, 'formulas' ) ?: $formula;
 						$category_name_suffix = '';
-
 						if ( $category_type == 'shipment' ) {
 							$category_name_suffix = _l( 'Прием/покупка (текст кнопки)', 1 );
+							$first_operation      = '-';
 						} elseif ( $category_type == 'reception' ) {
 							$category_name_suffix = _l( 'Отгрузка/продажа (текст кнопки)', 1 );
+							$first_operation      = '+';
 						}
-						$res['button_text'] = $category_name_suffix;
-						$points             = get_points_by_point_type( $category_type ?: false );
-                        $res['$suitable_point_ID'] = $suitable_point_ID;
+						$res['button_text']        = $category_name_suffix;
+						$points                    = get_points_by_point_type( $category_type ?: false );
+						$res['$suitable_point_ID'] = $suitable_point_ID;
 						if ( ! $suitable_point_ID ) {
 							if ( $lat && $lng && $address ) {
 								if ( $points ) {
@@ -612,7 +616,7 @@ function new_calculation() {
 							}
 						}
 						$res['$suitable_point_ID1'] = $suitable_point_ID;
-						$res['$qnt'] = $qnt;
+						$res['$qnt']                = $qnt;
 						if ( $suitable_point_ID ) {
 							$point_products = carbon_get_post_meta( $suitable_point_ID, 'point_basis_products' );
 							if ( $point_products ) {
@@ -629,7 +633,7 @@ function new_calculation() {
 										if ( $product_test && in_array( $category, get_the_terms( $product_id, 'categories' ) ) ) {
 											$point_product_price  = $point_product['point_product_price'];
 											$point_price          = $point_product['point_price'];
-											$formulas             = $point_product['formulas'];
+											$formulas             = $formula;
 											$currencies           = $point_product['currency'];
 											$base_currency        = $point_product['base_currency'];
 											$point_price_currency = $point_product['point_price_currency'];
@@ -650,7 +654,6 @@ function new_calculation() {
 												$point_logistics_price_currency_rate = get_currency_rate( $point_logistics_price_currency );
 												$point_logistics_price               = ( $point_logistics_price * $point_logistics_price_currency_rate ) / $base_currency_rate;
 											}
-
 											if ( $selected_region ) {
 												$_regions = $point_product['regions'];
 												if ( $_regions ) {
@@ -664,8 +667,8 @@ function new_calculation() {
 																	'point_id'            => $suitable_point_ID,
 																	'point_service_price' => $point_price,
 																	'qnt'                 => $qnt,
-
-																	'logistics' => $point_logistics_price,
+																	'logistics'           => $point_logistics_price,
+																	'first_operation'     => $first_operation,
 																)
 															);
 															$point_product_price    = $formulas_sum;
@@ -675,7 +678,7 @@ function new_calculation() {
 													}
 												}
 											}
-											$application_price_string = formated_price( ( $point_product_price  ) ) . $currency_sting;
+											$application_price_string = formated_price( ( $point_product_price ) ) . $currency_sting;
 											if ( $currencies ) {
 												$UAH           = $point_product_price * $base_currency_rate;
 												$UAH_to_region = $price_to_region * $base_currency_rate;
@@ -713,31 +716,31 @@ function new_calculation() {
 												if ( $product_test && in_array( $category, get_the_terms( $product_id, 'categories' ) ) ) {
 													$basis = $point_product['basis'];
 													if ( $basis && get_post( $basis ) ) {
-														$regions              = get_the_terms( $suitable_point_ID, 'regions' );
-														$region_id            = $regions ? get_the_terms( $suitable_point_ID, 'regions' )[0]->term_id : 0;
-														$point_price          = $point_product['point_price'];
-                                                        $res[$product_id.'$point_price'] = $point_price;
-														$formulas             = $point_product['formulas'];
-														$currencies           = $point_product['currency'];
-														$point_type           = $point_product['point_type'];
-														$price_data           = get_basis_product_price( $product_id, $basis, $point_type );
-														$price                = $price_data['price'];
-														$res[$product_id.'$price'] = $price;
-														$base_currency        = $price_data['base_currency'];
-														$point_price_currency = $point_product['point_price_currency'];
-														$base_currency_rate   = get_currency_rate( $base_currency );
-														$currency_sting       = get_currency_sting( $base_currency );
+														$regions                             = get_the_terms( $suitable_point_ID, 'regions' );
+														$region_id                           = $regions ? get_the_terms( $suitable_point_ID, 'regions' )[0]->term_id : 0;
+														$point_price                         = $point_product['point_price'];
+														$res[ $product_id . '$point_price' ] = $point_price;
+														$formulas                            = $formula;
+														$currencies                          = $point_product['currency'];
+														$point_type                          = $point_product['point_type'];
+														$price_data                          = get_basis_product_price( $product_id, $basis, $point_type );
+														$price                               = $price_data['price'];
+														$res[ $product_id . '$price' ]       = $price;
+														$base_currency                       = $price_data['base_currency'];
+														$point_price_currency                = $point_product['point_price_currency'];
+														$base_currency_rate                  = get_currency_rate( $base_currency );
+														$currency_sting                      = get_currency_sting( $base_currency );
 														if ( $point_price_currency != $base_currency && $point_price > 0 ) {
 															$point_price_currency_rate = get_currency_rate( $point_price_currency );
 															$point_price               = ( $point_price * $point_price_currency_rate ) / $base_currency_rate;
 														}
-														$res[$product_id.'$point_price1'] = $point_price;
-														$basis_location = carbon_get_post_meta( $basis, 'crb_company_location' );
-														$point_location = carbon_get_post_meta( $point_id, 'crb_company_location' );
-														$distance       = getDrivingDistance( $basis_location['value'], $point_location['value'] );
+														$res[ $product_id . '$point_price1' ] = $point_price;
+														$basis_location                       = carbon_get_post_meta( $basis, 'crb_company_location' );
+														$point_location                       = carbon_get_post_meta( $point_id, 'crb_company_location' );
+														$distance                             = getDrivingDistance( $basis_location['value'], $point_location['value'] );
 														if ( $price ):
 															$price                          = $price * $qnt;
-															$res[$product_id.'$price1'] = $point_price;
+															$res[ $product_id . '$price1' ] = $point_price;
 															$point_logistics_price          = $point_product['point_logistics_price'] ?: 0;
 															$point_logistics_price_currency = $point_product['point_logistics_price_price_currency'];
 															if ( $point_logistics_price_currency != $base_currency && $point_logistics_price > 0 ) {
@@ -755,12 +758,13 @@ function new_calculation() {
 																	'distance'            => $distance,
 																	'logistics'           => $point_logistics_price,
 																	'qnt'                 => $qnt,
+																	'first_operation'     => $first_operation,
 																)
 															);
 
-															$res[$product_id.'$formulas_sum'] = $formulas_sum;
-															$point_product_price      = is_numeric( $formulas_sum ) ? $formulas_sum : $price;
-															$application_price_string = formated_price( ( $point_product_price  ) ) . $currency_sting;
+															$res[ $product_id . '$formulas_sum' ] = $formulas_sum;
+															$point_product_price                  = is_numeric( $formulas_sum ) ? $formulas_sum : $price;
+															$application_price_string             = formated_price( ( $point_product_price ) ) . $currency_sting;
 															if ( $currencies ) {
 																$UAH = $point_product_price * $base_currency_rate;
 																foreach ( $currencies as $code ) {

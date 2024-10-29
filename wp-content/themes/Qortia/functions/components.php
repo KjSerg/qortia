@@ -58,7 +58,7 @@ function the_map_section( $screen ) {
                             </div>
 						<?php endif; ?>
                     </div>
-                    <div class="plac-wrap js-tab" data-aos="fade-up" data-aos-delay="600">
+                    <div class="place-wrap js-tab" data-aos="fade-up" data-aos-delay="600">
                         <div class="place-wrap__map">
                             <div class="place-wrap__map-main">
 
@@ -872,15 +872,20 @@ function the_map_section( $screen ) {
                                             </div>
 											<?php
 											if ( $collection ):
+												$formula = carbon_get_theme_option( 'formulas' );
+												$first_operation = '';
 												foreach ( $collection as $term ):
 													$category_type = carbon_get_term_meta( $term->term_id, 'category_type' );
 													$points = get_points_by_point_type( $category_type ?: false );
+													$formula = carbon_get_term_meta( $term->term_id, 'formulas' ) ?: $formula;
 													if ( $points ):
 														$category_name_suffix = '';
 														if ( $category_type == 'reception' ) {
 															$category_name_suffix = _l( 'Прием/покупка (суффикс категории)', 1 );
+															$first_operation      = '+';
 														} elseif ( $category_type == 'shipment' ) {
 															$category_name_suffix = _l( 'Отгрузка/продажа (суффикс категории)', 1 );
+															$first_operation      = '-';
 														}
 														?>
                                                         <div class="price-collapse js-collapse">
@@ -1022,11 +1027,14 @@ function the_map_point_product( $product_id, $point_product, $point_id ) {
 		$base_currency       = $price_data['base_currency'];
 		$base_currency_rate  = get_currency_rate( $base_currency );
 		$currencies          = $point_product['currency'];
+		v( "product_id: $product_id" );
 		$point_product_price = get_simple_point_product_price( $point_product, $product_id, array(
 			'point_id'  => $point_id,
 			'region_id' => $region_id,
 			'qnt'       => 1
 		) );
+
+		v( 'title:' . get_the_title( $product_id ) );
 		$price_str           = get_formated_price( $point_product_price, $base_currency );
 		if ( $currencies ) {
 			$UAH = $point_product_price * $base_currency_rate;
@@ -1050,16 +1058,29 @@ function the_map_point_product( $product_id, $point_product, $point_id ) {
 }
 
 function the_map_basis_product( $point_product, $point_id, $region_id ) {
-	$product_id                     = $point_product['product'][0]['id'];
+	$formula         = carbon_get_theme_option( 'formulas' );
+	$first_operation = '';
+	$product_id      = $point_product['product'][0]['id'];
+	$cat             = get_the_terms( $product_id, 'categories' );
+	if ( $cat ) {
+		$cat           = $cat[0];
+		$category_type = carbon_get_term_meta( $cat->term_id, 'category_type' );
+		$formula       = carbon_get_term_meta( $cat->term_id, 'formulas' ) ?: $formula;
+		if ( $category_type == 'shipment' ) {
+			$first_operation = '-';
+		} elseif ( $category_type == 'reception' ) {
+			$first_operation = '+';
+		}
+	}
 	$currencies                     = $point_product['currency'];
 	$base_currency                  = $point_product['base_currency'];
 	$point_price                    = $point_product['point_price'];
-	$formulas                       = $point_product['formulas'];
+	$formulas                       = $formula;
 	$point_logistics_price          = $point_product['point_logistics_price'] ?: 0;
 	$point_logistics_price_currency = $point_product['point_logistics_price_price_currency'];
 	$point_price_currency           = $point_product['point_price_currency'];
 	$base_currency_rate             = get_currency_rate( $base_currency );
-	$point_product_price            = get_point_product_price( $point_product );
+	$point_product_price            = $point_product['point_product_price'];
 	if ( $point_logistics_price_currency != $base_currency && $point_logistics_price > 0 ) {
 		$point_logistics_price_currency_rate = get_currency_rate( $point_logistics_price_currency );
 		$point_logistics_price               = ( $point_logistics_price * $point_logistics_price_currency_rate ) / $base_currency_rate;
@@ -1067,7 +1088,9 @@ function the_map_basis_product( $point_product, $point_id, $region_id ) {
 	$basis_location = carbon_get_post_meta( $point_id, 'crb_company_location' );
 	$point_location = carbon_get_term_meta( $region_id, 'region_location' );
 	$distance       = getDrivingDistance( $basis_location['value'], $point_location['value'] );
-	$formulas_sum   = get_formulas_sum( $formulas,
+
+//	v( "product_id: $product_id" );
+	$formulas_sum = get_formulas_sum( $formulas,
 		array(
 			'point_product_price' => $point_product_price,
 			'point_coef'          => $point_product['point_coef'],
@@ -1076,9 +1099,12 @@ function the_map_basis_product( $point_product, $point_id, $region_id ) {
 			'point_service_price' => $point_price,
 			'distance'            => $distance,
 			'logistics'           => $point_logistics_price,
+			'first_operation'     => $first_operation,
 		)
 	);
-
+//	v( '$point_product_price   ' . $point_product_price );
+//	v( 'res   ' . $formulas_sum );
+//	v( 'title:' . get_the_title( $product_id ) );
 	$point_product_price = is_numeric( $formulas_sum ) ? $formulas_sum : $point_product_price;
 	$price_str           = get_formated_price( $point_product_price, $base_currency );
 	if ( $currencies ) {
@@ -1100,6 +1126,20 @@ function the_map_basis_product( $point_product, $point_id, $region_id ) {
         </strong>
     </li>
 	<?php
+}
+
+function trackFunctionPath() {
+	$backtrace = debug_backtrace();
+	echo "<pre>";
+	foreach ( $backtrace as $trace ) {
+		echo "File: " . ( $trace['file'] ?? 'N/A' ) . "\n";
+		echo "Line: " . ( $trace['line'] ?? 'N/A' ) . "\n";
+		echo "Function: " . ( $trace['function'] ?? 'N/A' ) . "\n";
+		echo "Class: " . ( $trace['class'] ?? 'N/A' ) . "\n";
+		echo "Type: " . ( $trace['type'] ?? 'N/A' ) . "\n";
+		echo "---------------------------------\n";
+	}
+	echo "</pre>";
 }
 
 function the_contact_screen( $screen ) {

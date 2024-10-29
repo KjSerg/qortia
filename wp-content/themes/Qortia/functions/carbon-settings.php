@@ -67,6 +67,17 @@ function crb_attach_theme_options() {
 			                   ->set_required( true ),
 		              ) )
 	         ) );
+
+	Container::make( 'theme_options', "Формула доставки" )
+	         ->set_page_parent( 'edit.php?post_type=points' )
+	         ->add_fields( array(
+		         Field::make( "separator", "crb_style_formulas", __( 'Формула доставки' ) ),
+		         Field::make( 'select', 'formulas', __( 'Формула доставки' ) )
+		              ->add_options( 'get_formulas_for_select' )
+		              ->set_help_text( 'Удалите первою математическою операцию / "действие" из формулы чтобы система сама подставила нужною относительно категории' ),
+	         ) );
+
+
 }
 
 add_action( 'carbon_fields_register_fields', 'crb_attach_in_front_page' );
@@ -1170,8 +1181,7 @@ function crb_attach_in_points() {
 
 			              Field::make( "text", "point_coef", "Коефициент пункта приемки" )->set_attribute( 'data-user', $user )
 			                   ->set_attribute( 'type', 'number' )->set_required( true ),
-			              Field::make( 'select', 'formulas', __( 'Формула доставки' ) )
-			                   ->add_options( 'get_formulas_for_select' ),
+
 			              Field::make( 'multiselect', 'currency', __( 'Валюты, которые отображаются согласно курса НБУ по отношению к базовой валюте' ) )
 			                   ->set_required( true )
 			                   ->add_options( 'get_currencies_value' )
@@ -1243,10 +1253,9 @@ function crb_attach_in_points() {
 
 			              Field::make( "text", "point_coef", "Коефициент пункта приемки" )->set_attribute( 'data-user', $user )
 			                   ->set_attribute( 'type', 'number' )->set_required( true ),
-			              Field::make( 'select', 'formulas', __( 'Формула доставки' ) )
-			                   ->add_options( 'get_formulas_for_select' )->set_width(50),
+
 			              Field::make( 'select', 'table_formulas', __( 'Формула доставки в таблице' ) )
-			                   ->add_options( 'get_formulas_for_select' )->set_width(50),
+			                   ->add_options( 'get_formulas_for_select' )->set_width( 50 ),
 			              Field::make( 'multiselect', 'currency', __( 'Валюты, которые отображаются согласно курса НБУ по отношению к базовой валюте' ) )
 			                   ->set_required( true )
 			                   ->add_options( 'get_currencies_value' )
@@ -1319,7 +1328,15 @@ function crb_attach_in_categories() {
 			              )
 		              ) ),
 		         Field::make( 'image', 'categories_image', __( 'Банер' ) ),
+	         ) );
 
+	Container::make( 'term_meta', "Формула доставки" )
+	         ->where( 'term_taxonomy', '=', 'categories' )
+	         ->add_fields( array(
+		         Field::make( "separator", "crb_style_formulas", __( 'Формула доставки' ) ),
+		         Field::make( 'select', 'formulas', __( 'Формула доставки' ) )
+		              ->add_options( 'get_formulas_for_select' )
+		              ->set_help_text( 'Удалите первою математическою операцию / "действие" из формулы чтобы система сама подставила нужною относительно категории' ),
 	         ) );
 }
 
@@ -1376,4 +1393,5 @@ function crb_get_gmaps_api_key( $key ) {
 
 	return 'AIzaSyDflrbL4EDIvYcTBu6x6k5T1ZKOgn9r0FY';
 }
+
 

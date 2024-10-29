@@ -150,7 +150,6 @@ add_action( 'admin_notices', function () {
 	}
 } );
 
-
 function restrict_admin_menu_for_non_admins() {
 	// Отримуємо поточного користувача
 	$current_user = wp_get_current_user();

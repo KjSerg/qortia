@@ -401,7 +401,7 @@ function get_currencies() {
 	return $currencies;
 }
 
-function get_formulas_string( $id, $first_operation = '+' ) {
+function get_formulas_string( $id, $first_operation = '' ) {
 	$res         = '';
 	$constructor = carbon_get_post_meta( $id, 'constructor' );
 	if ( $constructor ) {
@@ -588,7 +588,7 @@ function get_basis_for_select() {
 }
 
 function get_formulas_for_select() {
-	$res  = array();
+	$res  = array( null => 'Сделайте выбор' );
 	$args = array(
 		'posts_per_page' => - 1,
 		'post_type'      => 'formulas',
@@ -746,6 +746,7 @@ function get_formulas_sum( $formulas_id, $args = array() ) {
 		$distance            = $args['distance'] ?? 0;
 		$point_id            = $args['point_id'] ?? 0;
 		$point_service_price = $args['point_service_price'] ?? 0;
+		$first_operation     = $args['first_operation'] ?? '';
 		if ( $point_service_price ) {
 			$point_service_price = $point_service_price * $qnt;
 		}
@@ -773,31 +774,32 @@ function get_formulas_sum( $formulas_id, $args = array() ) {
 		$res = get_formulas_string_with_condition(
 			$formulas_id,
 			$s,
-			$r
+			$r,
+			$first_operation
 		);
+//		v( $res );
 		$res = str_replace(
 			$s,
 			$r,
 			$res
 		);
-
 //		v( $res );
 		$res = $point_product_price . $res;
-//		v( $res );
 		$num = evaluateMathExpression( $res );
-//		var_dump( $num );
 	}
 
 	return $num;
 }
 
-function get_formulas_string_with_condition( $id, $search, $replace ) {
+function get_formulas_string_with_condition( $id, $search, $replace, $first_operation = '' ) {
 	$res         = '';
 	$constructor = carbon_get_post_meta( $id, 'constructor' );
 	if ( $constructor ) {
-
 		foreach ( $constructor as $index => $item ) {
 			$prev_index = $index - 1;
+			if ( $constructor[0]['_type'] != 'operation' && $first_operation ) {
+				$res .= $first_operation;
+			}
 			if ( $prev_index > 0 ) {
 				if ( $constructor[ $prev_index ]['_type'] != 'operation' && $item['_type'] != 'operation' ) {
 					return 0;
@@ -883,7 +885,6 @@ function get_formulas_string_with_condition( $id, $search, $replace ) {
 								$temp = str_replace(
 									$search, $replace, $temp
 								);
-//								v($temp);
 								try {
 									$temp = eval( $temp );
 								} catch ( ParseError $e ) {
@@ -950,12 +951,6 @@ function get_basis_product_price( $product_id, $basis, $type ) {
 		foreach ( $point_products as $point_product ) {
 			$basis_product_id = (int) $point_product['product'][0]['id'];
 			$basis_type       = $point_product['point_type'];
-//			if(320 === $product_id){
-//				v($basis_product_id);
-//				v($product_id);
-//				v($basis_type);
-//				v($type);
-//			}
 
 			if ( $basis_product_id == $product_id && $basis_type == $type ) {
 
@@ -1092,6 +1087,19 @@ function get_formated_price( $price, $currency ) {
 }
 
 function get_simple_point_product_price( $point_product, $product_id, $args = array() ) {
+	$formula         = carbon_get_theme_option( 'formulas' );
+	$first_operation = '';
+	$cat             = get_the_terms( $product_id, 'categories' );
+	if ( $cat ) {
+		$cat           = $cat[0];
+		$category_type = carbon_get_term_meta( $cat->term_id, 'category_type' );
+		$formula       = carbon_get_term_meta( $cat->term_id, 'formulas' ) ?: $formula;
+		if ( $category_type == 'shipment' ) {
+			$first_operation = '-';
+		} elseif ( $category_type == 'reception' ) {
+			$first_operation = '+';
+		}
+	}
 	$point_id                       = $args['point_id'] ?? 0;
 	$region_id                      = $args['region_id'] ?? 0;
 	$qnt                            = $args['qnt'] ?? 25;
@@ -1101,7 +1109,7 @@ function get_simple_point_product_price( $point_product, $product_id, $args = ar
 	$point_price_currency           = $point_product['point_price_currency'];
 	$point_logistics_price          = $point_product['point_logistics_price'] ?: 0;
 	$point_logistics_price_currency = $point_product['point_logistics_price_price_currency'];
-	$formulas                       = $point_product['formulas'];
+	$formulas                       = $formula;
 	$price_data                     = get_basis_product_price( $product_id, $basis, $point_type );
 	$price                          = $price_data['price'];
 	$base_currency                  = $price_data['base_currency'];
@@ -1128,6 +1136,7 @@ function get_simple_point_product_price( $point_product, $product_id, $args = ar
 				'distance'            => $distance,
 				'logistics'           => $point_logistics_price,
 				'qnt'                 => $qnt,
+				'first_operation'     => $first_operation,
 			)
 		);
 		$currency_sting      = get_currency_sting( $base_currency );
@@ -1137,4 +1146,46 @@ function get_simple_point_product_price( $point_product, $product_id, $args = ar
 	}
 
 	return $price;
+}
+
+function get_categories_options() {
+	$arr        = array();
+	$categories = get_terms( array(
+		'taxonomy'   => 'categories',
+		'hide_empty' => false,
+	) );
+	if ( function_exists( 'pll_default_language' ) ) {
+		if ( $pll_default_language = pll_default_language() ) {
+			if ( $categories ) {
+				$temp = array();
+				foreach ( $categories as $category ) {
+					$category = pll_get_term( $category, $pll_default_language );
+					if ( $category ) {
+						$category = get_term_by( 'id', $category, 'categories' );
+						$slug     = $category->slug;
+						$name     = $category->name;
+						if ( ! isset( $temp[ $slug ] ) ) {
+							$temp[ $slug ] = $name;
+						}
+					}
+
+				}
+				if ( $temp ) {
+					foreach ( $temp as $slug => $name ) {
+						$arr[ $slug ] = $name;
+					}
+				}
+			}
+		}
+	} else {
+		if ( $categories ) {
+			foreach ( $categories as $category ) {
+				$slug         = $category->slug;
+				$name         = $category->name;
+				$arr[ $slug ] = $name;
+			}
+		}
+	}
+
+	return $arr;
 }

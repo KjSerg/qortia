@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="339bc16d-3e60-4506-9554-45b5586eb58c" name="Changes" comment="змінив версію карбонфілдс на новішу + сортування категорій на головній + зміна блоку карти" />
+    <list default="true" id="339bc16d-3e60-4506-9554-45b5586eb58c" name="Changes" comment="змінив версію карбонфілдс на новішу + сортування категорій на головній + зміна блоку карти">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/ajax-functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/ajax-functions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/carbon-settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/carbon-settings.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/components.php" beforeDir="false" afterPath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/components.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/helpers.php" beforeDir="false" afterPath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/helpers.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/wp-content/themes/Qortia/functions/settings.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -105,6 +112,7 @@
       <workItem from="1729153589480" duration="3714000" />
       <workItem from="1729499113193" duration="5638000" />
       <workItem from="1729670888422" duration="7236000" />
+      <workItem from="1730192139457" duration="21932000" />
     </task>
     <task id="LOCAL-00001" summary="Added initial project files1">
       <option name="closed" value="true" />
@@ -167,6 +175,15 @@
           <url>file://$PROJECT_DIR$/wp-content/themes/Qortia/assets/js/scripts.js</url>
           <line>382</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/wp-content/themes/Qortia/functions/helpers.php</url>
+          <line>333</line>
+          <properties>
+            <option name="className" value="" />
+            <option name="methodName" value="\html_information_for_formula" />
+          </properties>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
